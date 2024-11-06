@@ -99,11 +99,6 @@ SECTIONS
     . = ALIGN(4);
   } > DTCMRAM_BUFFERS
 
-  .openamp_section (NOLOAD) : {
-       . = ABSOLUTE(0x38000000);
-       *(.resource_table)
-   } >RAM_D3  AT > FLASH
-
   /* Constant data into "FLASH" Rom type memory */
   .rodata :
   {

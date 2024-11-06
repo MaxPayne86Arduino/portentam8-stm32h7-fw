@@ -29,6 +29,14 @@ typedef struct {
 	};
 } metal_mutex_t;
 
+#define __metal_mutex_acquire(x)
+#define __metal_mutex_try_acquire(x) 0
+#define __metal_mutex_release(x)
+#define __metal_mutex_is_acquired(x)	0
+#define __metal_mutex_init(x)
+#define __metal_mutex_deinit(x)
+
+#if 0
 /*
  * METAL_MUTEX_INIT - used for initializing an mutex elmenet in a static struct
  * or global
@@ -71,6 +79,7 @@ static inline int __metal_mutex_is_acquired(metal_mutex_t *mutex)
 {
 	return atomic_load(&mutex->v);
 }
+#endif
 
 #ifdef __cplusplus
 }

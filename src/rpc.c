@@ -40,7 +40,7 @@ enum endpoints_t {
  * GLOBAL VARIABLES
  **************************************************************************************/
 
-static struct rpmsg_endpoint rp_endpoints[4];
+static struct rpmsg_endpoint rp_endpoints[2];
 extern ring_buffer_t virtual_uart_ring_buffer;
 
 /**************************************************************************************
@@ -82,6 +82,10 @@ int serial_rpc_begin() {
   /* Initialize the rpmsg endpoint to set default addresses to RPMSG_ADDR_ANY */
   memset(rp_endpoints, 0, sizeof(rp_endpoints));
 
+  return 1;
+}
+
+int serial_rpc_ready() {
   /*
   * The rpmsg service is initiate by the remote processor, on H7 new_service_cb
   * callback is received on service creation. Wait for the callback
@@ -108,6 +112,6 @@ void serial_rpc_write(uint8_t const * buf, size_t len) {
 
 void HSEM1_IRQHandler(void)
 {
-  HAL_HSEM_IRQHandler();
   OPENAMP_check_for_message();
+  HAL_HSEM_IRQHandler();
 }

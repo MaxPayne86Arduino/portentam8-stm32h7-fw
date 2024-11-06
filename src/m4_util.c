@@ -69,8 +69,9 @@ void try_execute_m4_app() {
 
   if (m4_app_valid) {
     dbg_printf("Boot CM4\n");
+    serial_rpc_begin();
     LL_RCC_ForceCM4Boot();
-    m4_booted_correctly = serial_rpc_begin();
+    m4_booted_correctly = serial_rpc_ready();
     dbg_printf("CM4 booted: %d\n", m4_booted_correctly);
   }
 }
