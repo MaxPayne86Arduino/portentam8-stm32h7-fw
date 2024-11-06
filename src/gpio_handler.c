@@ -96,8 +96,8 @@ int gpio_handler(uint8_t const opcode, uint8_t const * data, uint16_t const size
     case IRQ_TYPE:
       GPIO_InitStruct.Pin = GPIO_pinmap[index].pin;
 
-      if (GPIO_InitStruct.Pin > GPIO_PIN_9) {
-        // IRQs from 10 to 15 are exclusively used by SPI
+      if (GPIO_InitStruct.Pin == GPIO_PIN_15) {
+        // IRQ15 is used for SPI
         return 0;
       }
 
@@ -139,7 +139,7 @@ int gpio_handler(uint8_t const opcode, uint8_t const * data, uint16_t const size
     case IRQ_ACK:
       dbg_printf("GPIO%d: IRQ_ACK %d\n", index, value);
       /* Re-enable the interrupt that was disabled within
-       * handle_irq to prevent firing of another interrupt
+       * gpio_handle_irq to prevent firing of another interrupt
        * until this one has been signaled to the application.
        */
       gpio_enable_irq(GPIO_pinmap[index].pin);

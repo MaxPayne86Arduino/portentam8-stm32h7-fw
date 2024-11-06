@@ -93,12 +93,12 @@ static void MX_GPIO_Init(void) {
   __HAL_RCC_GPIOG_CLK_ENABLE();
 }
 
-static void handle_irq() {
+void gpio_handle_irq() {
   uint32_t pr = EXTI->PR1;
   uint8_t index = 0;
   while (pr != 0) {
     if (pr & 0x1) {
-      dbg_printf("handle_irq: index = %d (%x)\n", index, 1<<index);
+      dbg_printf("gpio_handle_irq: index = %d (%x)\n", index, 1<<index);
       /* Set the flag variable which leads to a transmission
        * of a interrupt event within gpio_handle_data.
        */
@@ -153,17 +153,17 @@ void gpio_enable_irq(uint16_t pin) {
 void gpio_set_handler(uint16_t pin)
 {
   if (pin == GPIO_PIN_0) {
-    NVIC_SetVector(EXTI0_IRQn, (uint32_t)&handle_irq);
+    NVIC_SetVector(EXTI0_IRQn, (uint32_t)&gpio_handle_irq);
   } else if (pin == GPIO_PIN_1) {
-    NVIC_SetVector(EXTI1_IRQn, (uint32_t)&handle_irq);
+    NVIC_SetVector(EXTI1_IRQn, (uint32_t)&gpio_handle_irq);
   } else if (pin == GPIO_PIN_2) {
-    NVIC_SetVector(EXTI2_IRQn, (uint32_t)&handle_irq);
+    NVIC_SetVector(EXTI2_IRQn, (uint32_t)&gpio_handle_irq);
   } else if (pin == GPIO_PIN_3) {
-    NVIC_SetVector(EXTI3_IRQn, (uint32_t)&handle_irq);
+    NVIC_SetVector(EXTI3_IRQn, (uint32_t)&gpio_handle_irq);
   } else if (pin == GPIO_PIN_4) {
-    NVIC_SetVector(EXTI4_IRQn, (uint32_t)&handle_irq);
+    NVIC_SetVector(EXTI4_IRQn, (uint32_t)&gpio_handle_irq);
   } else if (pin >= GPIO_PIN_5 && pin <= GPIO_PIN_9) {
-    NVIC_SetVector(EXTI9_5_IRQn, (uint32_t)&handle_irq);
+    NVIC_SetVector(EXTI9_5_IRQn, (uint32_t)&gpio_handle_irq);
   }
 }
 
@@ -219,8 +219,8 @@ int gpio_handle_data()
   uint16_t const copy_int_event_flags = int_event_flags;
   __enable_irq();
 
-  /* We have a total of 10 external interrupts. */
-  for (uint8_t index = 0; index < 10; index++)
+  /* We have a total of 15 external interrupts - IRQ15 is dedicated to SPI */
+  for (uint8_t index = 0; index < 15; index++)
   {
     /* Check whether or not an external interrupt has occurred. */
     if (copy_int_event_flags & (1 << index))

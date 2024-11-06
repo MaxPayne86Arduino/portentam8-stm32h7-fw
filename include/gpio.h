@@ -57,4 +57,6 @@ void gpio_enable_irq(uint16_t pin);
 void gpio_disable_irq(uint16_t pin);
 void gpio_set_handler(uint16_t pin);
 
+void gpio_handle_irq();
+
 #endif /* GPIO_H */

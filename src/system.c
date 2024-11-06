@@ -28,6 +28,8 @@
 #include <string.h>
 #include "rpc.h"
 #include "spi.h"
+#include "gpio.h"
+#include "stm32h7xx_ll_exti.h"
 
 /**************************************************************************************
  * GLOBAL VARIABLES
@@ -219,7 +221,7 @@ int get_available_enqueue() {
 int enqueue_packet(uint8_t const peripheral, uint8_t const opcode, uint16_t const size, void * data)
 {
   /* Enter critical section: Since this function is called both from inside
-   * interrupt context (handle_irq/gpio.c) as well as from normal execution
+   * interrupt context (gpio_handle_irq/gpio.c) as well as from normal execution
    * context it is necessary not only to blindly re-enable interrupts, but
    * to store the current interrupt situation and restore it at the end of
    * the critical section.
@@ -347,10 +349,12 @@ void dma_load() {
 
 void EXTI15_10_IRQHandler(void)
 {
-  if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15) == GPIO_PIN_SET) {
+  if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_15) == GPIO_PIN_SET && LL_EXTI_ReadFlag_0_31(LL_EXTI_LINE_15)) {
     HAL_GPIO_EXTI_IRQHandler(GPIO_PIN_15);
     spi_end();
     dma_load();
+  } else {
+    gpio_handle_irq();
   }
 }
 
